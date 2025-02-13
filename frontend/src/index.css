@@ -1,4 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+.logo {
+    width: 50px; /* Adjust size */
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover; /* Ensures the image stays within the circle */
+  }
+  

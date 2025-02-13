@@ -3,8 +3,23 @@ import Header from "../components/Header";
 const Home = () => {
   return (
     <>
-    <div className="navbar bg-yellow-500 text-gray-900 font-bold">
-</div>
+    <nav className="bg-yellow-500 text-gray-900 py-4 shadow-md">
+  <div className="container mx-auto flex items-center justify-between px-24">  
+    {/* Logo & App Name */}
+    <div className="flex items-center space-x-3 ml-10"> 
+      <img src="src/assets/appete.png" alt="Appete Logo" className="h-12 w-12 rounded-full object-cover" />
+      <span className="text-2xl font-bold tracking-tight text-white whitespace-nowrap">Appete</span>
+    </div>
+
+    {/* Learn More Button */}
+    <button className="bg-gray-700 text-white px-6 py-2 rounded-lg hover:bg-gray-800 mr-4">
+      <a href="/info" className="text-white">
+      Learn More
+      </a>
+    </button>
+  </div>
+</nav>
+
       <div className="relative overflow-hidden bg-white">
         <div className="pb-80 pt-16 sm:pb-40 sm:pt-24 lg:pb-48 lg:pt-40">
           <div className="relative mx-auto max-w-7xl px-4 sm:static sm:px-6 lg:px-8">
@@ -19,7 +34,7 @@ const Home = () => {
                   sign-up <span aria-hidden="true">&rarr;</span>
                 </a>
               </div>
-              <p className="mt-4 text-xl text-gray-500">
+              <p className="mt-4 text-l text-gray-500">
                 Experience the joy of discovering new dining experiences right
                 in your neighborhood. Whether you’re searching for a cozy café
                 or the next big culinary trend, Appete is your go-to platform

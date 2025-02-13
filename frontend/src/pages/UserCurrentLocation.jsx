@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useJsApiLoader, GoogleMap, Marker, Autocomplete } from '@react-google-maps/api';
 import { updateUserStart, updateUserSuccess, updateUserFailure } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
+import Header from '../components/Header';
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaUtensils, FaUtensilSpoon } from 'react-icons/fa';
+import { ToastContainer, toast } from "react-toastify"; // Import Toastify components
+import "react-toastify/dist/ReactToastify.css";
 
 const backendurl = import.meta.env.VITE_BACKEND_URL
 
@@ -16,12 +19,12 @@ const UserCurrentLocation = () => {
     libraries: ["places"],
   });
 
-  const handleGoBack = () => {
-    navigate('/welcome');
-  };
-  const handleNext = () => {
-    navigate('/user/nearest-restaurants');
-  };
+  // const handleGoBack = () => {
+  //   navigate('/welcome');
+  // };
+  // const handleNext = () => {
+  //   navigate('/user/nearest-restaurants');
+  // };
 
   const [center, setCenter] = useState({ lat: 6.0329, lng: 80.2168 });
   const originRef = useRef();
@@ -79,14 +82,16 @@ const UserCurrentLocation = () => {
 
       const data = await res.json();
       if (data.success === false) {
-        setMessage({ type: 'error', text: data.message });
+        toast.error(data.message);
         dispatch(updateUserFailure({ message: data.message }));
       } else {
-        setMessage({ type: 'success', text: 'Location updated successfully!' });
+        toast.success("Location updated successfully", { 
+          autoClose: 2000,
+          onClose: () => navigate('/user/nearest-restaurants')});
         dispatch(updateUserSuccess(data));
       }
     } catch (error) {
-      setMessage({ type: 'error', text: error.message || 'An unexpected error occurred' });
+      toast.error('An unexpected error occurred', { autoClose: 2000 });
       dispatch(updateUserFailure({ message: error.message || 'An unexpected error occurred' }));
     }
   };
@@ -98,10 +103,24 @@ const UserCurrentLocation = () => {
   return (
 
     <div style={{ height: '100vh', width: '100%' }}>
-      <button className='z-10 absolute top-10 left-10 text-5xl text-neutral-900 ' ><FaArrowAltCircleLeft onClick={handleGoBack} /></button>
-      <button className='z-10 absolute top-10 right-10 text-5xl text-neutral-900 ' ><FaArrowAltCircleRight onClick={handleNext} /></button>
+      <Header />
+ {/* <button 
+  className='z-10 absolute top-10 left-10 text-l flex items-center gap-2 px-4 py-2 bg-gray-500 rounded-lg shadow-md hover:bg-gray-700' 
+  onClick={handleGoBack}
+>
+  <FaArrowAltCircleLeft className="text-neutral-900" />
+  Home
+</button>
 
-      {message.text && (
+<button 
+  className='z-10 absolute top-10 right-10 text-2xl flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-md hover:bg-gray-100' 
+  onClick={handleNext}
+>
+  Nearest Restaurants
+  <FaArrowAltCircleRight className="text-neutral-900" />
+</button> */}
+
+      {/* {message.text && (
         <div style={{
           position: 'absolute',
           top: '10px',
@@ -119,7 +138,7 @@ const UserCurrentLocation = () => {
         }}>
           {message.text}
         </div>
-      )}
+      )} */}
       <div style={{
         position: 'absolute',
         top: '50px',

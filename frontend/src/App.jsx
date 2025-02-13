@@ -1,6 +1,8 @@
 import React from "react";
+import {ToastContainer} from "react-toastify";
 import { Routes, Route } from "react-router-dom";
 import RestaurantSignUp from "./pages/RestaurantSignUp";
+import LearnMore from "./pages/LearnMore";
 import RestaurantHome from "./pages/RestaurantHome";
 import RestaurantSignIn from "./pages/RestaurantSignIn";
 import Home from "./pages/Home";
@@ -23,8 +25,10 @@ import EditMenu from "./pages/EditMenu";
 const App = () => {
   return (
     <>
+    <ToastContainer />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/info" element={<LearnMore />} />
         <Route element={<RestaurantPrivateRoute />}>
         <Route path="/restaurant/home" element={<RestaurantHome />} />
         </Route>

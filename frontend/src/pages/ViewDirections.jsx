@@ -86,16 +86,16 @@ const ViewDirections = () => {
           zoom={15}
           mapContainerStyle={{ width: '100%', height: '100%' }}
         >
-          <Marker position={center} label="Your Location" />
-          {restaurant && (
+          {/* <Marker position={center}   /> */}
+          {/* {restaurant && (
             <Marker
               position={{
                 lat: restaurant.location.coordinates[1],
                 lng: restaurant.location.coordinates[0],
               }}
-              label="Restaurant"
+ 
             />
-          )}
+          )} */}
           {restaurant && shouldCalculateRoute && (
             <DirectionsService
               options={{
@@ -125,44 +125,44 @@ const ViewDirections = () => {
           <h1 className="text-2xl font-bold text-gray-600 text-center mb-4">Locate Your Favorite Restaurant</h1>
         </div>
         <div className="bg-gray-100 p-4 shadow-md rounded-lg mb-6">
-          <h2 className="text-lg font-semibold mb-2">{restaurant?.title}</h2>
+          <h2 className="text-lg text-gray-900 font-semibold mb-2">{restaurant?.title}</h2>
           <div className="flex items-center mb-4">
             <FaMapMarkerAlt className="text-gray-600 text-lg mr-2" />
             <div>
               <h3 className="text-sm font-medium">Address</h3>
-              <p className="text-sm">{restaurant?.address || "Not available"}</p>
+              <p className="text-sm text-gray-600">{restaurant?.address || "Not available"}</p>
             </div>
           </div>
           <div className="flex items-center mb-4">
             <FaPhoneAlt className="text-gray-600 text-lg mr-2" />
             <div>
               <h3 className="text-sm font-medium">Hotline</h3>
-              <p className="text-sm">{restaurant?.hotline || "Not available"}</p>
+              <p className="text-sm text-gray-600">{restaurant?.hotline || "Not available"}</p>
             </div>
           </div>
           <div className="flex items-center mb-4">
             <FaEnvelope className="text-gray-600 text-lg mr-2" />
             <div>
               <h3 className="text-sm font-medium">Email</h3>
-              <p className="text-sm">{restaurant?.officialEmail || "Not available"}</p>
+              <p className="text-sm text-gray-600">{restaurant?.officialEmail || "Not available"}</p>
             </div>
           </div>
         </div>
         {directionResponse && (
           <div className="bg-gray-100 p-4 shadow-md rounded-lg">
-            <h2 className="text-lg font-semibold mb-2">Route Details</h2>
+            <h2 className="text-lg text-gray-900 font-semibold mb-2">Route Details</h2>
             <div className="flex items-center mb-2">
               <BiSolidCar className="text-gray-600 text-lg mr-2" />
               <div>
                 <span className="text-sm font-medium">Duration:</span>
-                <span className="text-sm"> {directionResponse.routes[0].legs[0].duration.text}</span>
+                <span className="text-sm text-gray-600"> {directionResponse.routes[0].legs[0].duration.text}</span>
               </div>
             </div>
             <div className="flex items-center">
               <FaClock className="text-gray-600 text-lg mr-2" />
               <div>
                 <span className="text-sm font-medium">Distance:</span>
-                <span className="text-sm"> {directionResponse.routes[0].legs[0].distance.text}</span>
+                <span className="text-sm text-gray-600"> {directionResponse.routes[0].legs[0].distance.text}</span>
               </div>
             </div>
           </div>

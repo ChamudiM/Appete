@@ -7,13 +7,12 @@ import { Link } from "react-router-dom";
 import { signOut } from "../redux/user/restaurantSlice";
 import {
   FaBars,
+  FaArrowRight,
   FaHome,
   FaUserEdit,
   FaUtensils,
   FaTag,
   FaMapMarkerAlt,
-  FaBell,
-  FaQuestionCircle,
   FaEdit,
   FaTrash,
   FaSadTear,
@@ -237,7 +236,7 @@ const RestaurantDashboard = () => {
           </div>
         </div>
       </div>
-      <hr className="my-4 border-t-2 border-gray-300 mt-12" />
+      {/* <hr className="my-4 border-t-2 border-gray-300 mt-12" /> */}
 
       {/* Sidebar */}
       <div className="drawer">
@@ -247,7 +246,7 @@ const RestaurantDashboard = () => {
             htmlFor="my-drawer"
             className="drawer-button p-2 rounded-full shadow-lg bg-yellow-500 text-white hover:bg-yellow-600 cursor-pointer"
           >
-            <FaBars className="text-3xl font-extrabold" />
+            <FaArrowRight className="text-3xl font-extrabold" />
           </label>
           <div className=" pl-32">
             <dt className="text-3xl font-extrabold text-neutral-700 leading-tight items-center flex gap-4">
@@ -373,14 +372,14 @@ const RestaurantDashboard = () => {
 
             <div className="overflow-x-auto mt-6 w-4/5 ">
               <table className="table">
-                <thead>
+                {/* <thead>
                   <tr>
                     <th></th>
                     <th></th>
                     <th></th>
                     <th></th>
                   </tr>
-                </thead>
+                </thead> */}
                 <tbody>
                   {Object.keys(groupedMenuItems).map((category, catIndex) => (
                     <React.Fragment key={catIndex}>
@@ -485,7 +484,7 @@ const RestaurantDashboard = () => {
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
-          <ul className="menu bg-base-100 text-gray-900 min-h-full w-80 p-4 space-y-2">
+          <ul className="menu bg-white text-gray-900 min-h-full w-80 p-4 space-y-2">
             {/* Sidebar content here */}
             <span></span>
             <span></span>
