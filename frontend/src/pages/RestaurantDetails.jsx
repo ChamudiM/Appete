@@ -323,7 +323,7 @@ const RestaurantDetails = () => {
                         </div>
                       </td>
                       {/* <td>{item.description}</td> */}
-                      <td className="font-bold text-gray-900 text-lg"> Rs. {item.price}</td>
+                      <td className="font-bold text-gray-900 text-lg"> {item.price}</td>
                     </tr>
                   ))}
                 </React.Fragment>

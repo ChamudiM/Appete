@@ -17,9 +17,10 @@ import {
   updateSuccess,
   updateFailure,
 } from "../redux/user/restaurantSlice";
+import { ToastContainer, toast } from "react-toastify"; // Import Toastify components
 import { FaUser } from "react-icons/fa";
 
-const backendurl = import.meta.env.VITE_BACKEND_URL
+const backendurl = import.meta.env.VITE_BACKEND_URL;
 
 const RestaurantHome = () => {
   const dispatch = useDispatch();
@@ -127,49 +128,41 @@ const RestaurantHome = () => {
       const data = await res.json();
       if (data.success === false) {
         dispatch(updateFailure(data));
+
         return;
       }
       dispatch(updateSuccess(data));
+      toast.success("Updated Successfully");
       setIsSuccess(true);
     } catch (error) {
       dispatch(updateFailure(error));
+      toast.error("Update Failed");
     }
   };
 
   return (
     <>
       <RestaurantHeader />
-      <div className="flex min-h-full flex-col justify-center px-32 py-16 lg:px-48">
-        {/*
-  Heads up! 👋
+      <div className="flex flex-col items-center justify-center ">
+        <div className="bg-gray-100 border-2 border-yellow-500 shadow-md rounded-lg p-8 w-full max-w-2xl mt-10 mb-10 ml-40">
+          <form onSubmit={handleSubmit} className="w-full">
+            <div className="flex flex-col items-center justify-center">
+              <h1 className="pb-5 text-2xl font-semibold leading-7 text-gray-900">
+                Refresh Your Restaurant's Image
+              </h1>
 
-  Plugins:
-    - @tailwindcss/forms
-*/}
+              <p className="mx-auto mt-4 max-w-md text-center text-gray-500">
+                Enhance your restaurant's presence by updating your profile with
+                the latest details and make a lasting impression on your
+                customers
+              </p>
 
-        <div className="mx-auto max-w-screen-xl px-4  sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-lg">
-            <h1 className="text-center text-2xl font-bold text-neutral-600 sm:text-3xl">
-              Refresh Your Restaurant's Image
-            </h1>
-
-            <p className="mx-auto mt-4 max-w-md text-center text-gray-500">
-              Enhance your restaurant's presence by updating your profile with
-              the latest details and make a lasting impression on your customers
-            </p>
-
-            <form
-              onSubmit={handleSubmit}
-              className="mb-0 mt-6 space-y-4 rounded-lg p-4 shadow-lg sm:p-6 lg:p-8"
-            >
               <p className="text-center text-lg font-medium">
                 Edit Your Profile
               </p>
-              <div className="space-y-12">
+              <div className="w-full">
                 <div className="border-b border-gray-900/10 pb-12">
-                  
-
-                  <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                  <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6"> 
                     <div className="col-span-full">
                       <label
                         htmlFor="photo"
@@ -177,7 +170,7 @@ const RestaurantHome = () => {
                       >
                         Photo
                       </label>
-                      <div className="mt-2 gap-x-3 mx-auto">
+                      <div className="mt-2 gap-x-3 mx-auto ">
                         <div className="mx-auto">
                           <img
                             src={
@@ -188,13 +181,7 @@ const RestaurantHome = () => {
                             className="h-24 w-24 self-center rounded-full object-cover mx-auto"
                           />
                           {imageError ? (
-                            <progress
-                              className="progress progress-error w-56"
-                              value="100"
-                              max="100"
-                            >
-                              Error Uploading Image
-                            </progress>
+                            toast.error("Error Uploading Image")
                           ) : imagePercent > 0 && imagePercent < 100 ? (
                             <progress
                               className="progress progress-warning w-56"
@@ -206,9 +193,7 @@ const RestaurantHome = () => {
                               </span>
                             </progress>
                           ) : imagePercent === 100 ? (
-                            <span className="text-sm font-medium leading-6 text-yellow-500">
-                              Image Uploaded Successfully!
-                            </span>
+                            toast.success("Image Uploaded Successfully")
                           ) : (
                             ""
                           )}
@@ -222,10 +207,10 @@ const RestaurantHome = () => {
                         />
                         <button
                           type="button"
-                          className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                          className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 items-center justify-center"
                           onClick={() => filePickerRef.current.click()}
                         >
-                          Change
+                          Change Photo
                         </button>
                       </div>
                     </div>
@@ -244,7 +229,7 @@ const RestaurantHome = () => {
                             name="title"
                             id="title"
                             autoComplete="username"
-                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-yellow-500 sm:text-sm sm:max-w-md"
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-yellow-500 sm:text-sm sm:leading-6"
                             placeholder="janesmith"
                             onChange={handleChange}
                           />
@@ -252,7 +237,7 @@ const RestaurantHome = () => {
                       </div>
                     </div>
 
-                    <div className="col-span-full">
+                    <div className="sm:col-span-4">
                       <label
                         htmlFor="about"
                         className="block text-sm font-medium leading-6 text-gray-900"
@@ -265,7 +250,7 @@ const RestaurantHome = () => {
                           id="about"
                           name="about"
                           rows="3"
-                          className="block w-1/2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-yellow-500 sm:text-sm sm:leading-6"
+                          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-yellow-500 sm:text-sm sm:leading-6"
                           onChange={handleChange}
                         />
                       </div>
@@ -354,13 +339,7 @@ const RestaurantHome = () => {
                             />
                           )}
                           {coverError ? (
-                            <progress
-                              className="progress progress-error w-56"
-                              value="100"
-                              max="100"
-                            >
-                              Error Uploading Image
-                            </progress>
+                            toast.error("Error Uploading Image")
                           ) : coverPercent > 0 && coverPercent < 100 ? (
                             <progress
                               className="progress progress-warning w-56"
@@ -372,24 +351,11 @@ const RestaurantHome = () => {
                               </span>
                             </progress>
                           ) : coverPercent === 100 ? (
-                            <span className="text-sm font-medium leading-6 text-yellow-500">
-                              Image Uploaded Successfully!
-                            </span>
+                            toast.success("Cover Uploaded Successfully")
                           ) : (
                             ""
                           )}
-                          {/* <svg
-                      className="mx-auto h-12 w-12 text-gray-300"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M1.5 6a2.25 2.25 0 012.25-2.25h16.5A2.25 2.25 0 0122.5 6v12a2.25 2.25 0 01-2.25 2.25H3.75A2.25 2.25 0 011.5 18V6zM3 16.06V18c0 .414.336.75.75.75h16.5A.75.75 0 0021 18v-1.94l-2.69-2.689a1.5 1.5 0 00-2.12 0l-.88.879.97.97a.75.75 0 11-1.06 1.06l-5.16-5.159a1.5 1.5 0 00-2.12 0L3 16.061zm10.125-7.81a1.125 1.125 0 112.25 0 1.125 1.125 0 01-2.25 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg> */}
+
                           <div className="mt-4 flex text-sm leading-6 text-gray-600">
                             <label
                               htmlFor="file-upload"
@@ -460,7 +426,7 @@ const RestaurantHome = () => {
                       <div className="mt-2">
                         <button
                           type="button"
-                          onClick= {() => navigate('/restaurant/set-location')}
+                          onClick={() => navigate("/restaurant/set-location")}
                           className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 leading-6"
                         >
                           Change
@@ -470,7 +436,7 @@ const RestaurantHome = () => {
                   </div>
                 </div>
               </div>
-              {error && (
+              {/* {error && (
                 <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
                   Update Failed!!
                 </div>
@@ -484,7 +450,7 @@ const RestaurantHome = () => {
                 <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
                   Updated successfully!!
                 </div>
-              )}
+              )} */}
               <div className="mt-6 flex items-center justify-end gap-x-6">
                 <button
                   type="button"
@@ -499,8 +465,8 @@ const RestaurantHome = () => {
                   Save
                 </button>
               </div>
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       </div>
     </>

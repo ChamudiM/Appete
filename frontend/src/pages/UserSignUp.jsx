@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import { toast } from "react-toastify";
 
 const backendurl = import.meta.env.VITE_BACKEND_URL
 
@@ -31,12 +32,14 @@ const UserSignUp = () => {
 
       if (!res.ok) {
         const errorData = await res.json();
+        toast.error(errorData.message);
         throw new Error(
           errorData.message || `HTTP error! status: ${res.status}`
         );
       }
 
       const data = await res.json();
+      toast.success(data.message);
       console.log(data);
 
       setSuccess(true);
@@ -146,17 +149,7 @@ const UserSignUp = () => {
                 </div>
               </form>
 
-              {success && (
-                <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded text-center">
-                  Account created successfully!
-                </div>
-              )}
-
-              {error && (
-                <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded text-center">
-                  {error}
-                </div>
-              )}
+               
 
               <p className="mt-10 text-center text-sm text-gray-500">
                 Have an account?{" "}

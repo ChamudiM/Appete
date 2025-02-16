@@ -20,7 +20,7 @@ import {
 } from "../redux/user/userSlice";
 import { ToastContainer, toast } from "react-toastify"; // Import Toastify components
 import "react-toastify/dist/ReactToastify.css";
-import { FaEdit, FaSadCry } from "react-icons/fa";
+import { FaEdit,} from "react-icons/fa";
 const backendurl = import.meta.env.VITE_BACKEND_URL;
 
 const UserProfile = () => {

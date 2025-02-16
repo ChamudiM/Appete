@@ -10,6 +10,7 @@ import {
 import { app } from "../firebase";
 import RestaurantHeader from "../components/RestaurantHeader";
 import { FaUpload } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const backendurl = import.meta.env.VITE_BACKEND_URL
 
@@ -57,10 +58,12 @@ const CreateMenu = () => {
       (error) => {
         setImageError(true);
         console.log(error);
+        toast.error("Image upload failed!");
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           console.log("File available at", downloadURL);
+          toast.success("Image uploaded successfully!");
           setFormData({ ...formData, photo: downloadURL });
         });
       }
@@ -172,7 +175,7 @@ const CreateMenu = () => {
 */}
 
       <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-lg">
+        <div className="mx-auto max-w-lg ">
           <h1 className="text-center text-2xl font-bold text-neutral-500 sm:text-3xl">
             Keep Your Menu Exciting!
           </h1>
@@ -185,7 +188,7 @@ const CreateMenu = () => {
 
           <form
             onSubmit={handleSubmit}
-            className="mb-0 mt-6 space-y-4 rounded-lg p-4 shadow-lg sm:p-6 lg:p-8"
+            className="mb-0 mt-6 space-y-4 rounded-lg p-4 shadow-lg sm:p-6 lg:p-8 border-2 border-yellow-500"
           >
             <p className="text-center text-lg font-medium">Add Menu Items</p>
 
@@ -207,7 +210,7 @@ const CreateMenu = () => {
                     }
                   />
                 </div>
-                {imageError ? (
+                {/* {imageError ? (
                   <progress
                     className="progress progress-error w-56"
                     value="100"
@@ -226,12 +229,12 @@ const CreateMenu = () => {
                     </span>
                   </progress>
                 ) : imagePercent === 100 ? (
-                  <span className="text-sm font-medium leading-6 text-yellow-600 mt-2">
+                  <span className="text-sm font-medium leading-6 text-white mt-2">
                     Image Uploaded Successfully!
                   </span>
                 ) : (
                   ""
-                )}
+                )} */}
                 <input
                   id="photo"
                   type="file"
@@ -392,18 +395,14 @@ const CreateMenu = () => {
             </div>
             <p>
               {submitError ? (
-                <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-                  Cannot Save Menu Item
-                </div>
+                toast.error("Error saving menu item. Please try again.")
               ) : (
                 ""
               )}
             </p>
             <p>
               {submitDone ? (
-                <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-                  Menu Item Saved
-                </div>
+                 toast.success("Menu item saved successfully!")
               ) : (
                 ""
               )}

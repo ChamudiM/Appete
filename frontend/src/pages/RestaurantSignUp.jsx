@@ -7,6 +7,7 @@ import {
   signUpStart,
 } from "../redux/user/restaurantSlice";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 const backendurl = import.meta.env.VITE_BACKEND_URL
 
 const RestaurantSignUp = () => {
@@ -38,16 +39,19 @@ const RestaurantSignUp = () => {
       const data = await res.json();
       if (!res.ok) {
         dispatch(signUpFailure(data.message));
+        toast.error(data.message);
         return;
       }
 
       dispatch(signUpSuccess(data));
+      toast.success("Account created successfully!");
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
         navigate("/restaurant/sign-in");
       }, 500); // Hide success message after 0.5 seconds
     } catch (error) {
+      toast.error(error.message);
       dispatch(signUpFailure(error.message));
     }
   };
@@ -141,7 +145,7 @@ const RestaurantSignUp = () => {
                 </div>
               </form>
 
-              {success && (
+              {/* {success && (
                 <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
                   Account created successfully!
                 </div>
@@ -151,7 +155,7 @@ const RestaurantSignUp = () => {
                 <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
                   {error}
                 </div>
-              )}
+              )} */}
               <p className="mt-10 text-center text-sm text-gray-500 gap-4">
                 Have an account?
                 

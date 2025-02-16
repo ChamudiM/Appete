@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { signOut } from "../redux/user/restaurantSlice";
-import {
+import restaurantCover from "../assets/restaurant-cover.jpg";import {
   FaBars,
   FaArrowRight,
   FaHome,
@@ -20,10 +20,11 @@ import {
   FaStarHalfAlt,
   FaRegStar,
   FaTags,
-  FaInfo,
   FaListAlt,
   FaHamburger,
   FaSignOutAlt,
+  FaInfo,
+  FaInfoCircle,
 } from "react-icons/fa";
 import {
   updateStart,
@@ -33,8 +34,9 @@ import {
   deleteRestaurantSuccess,
   deleteRestaurantStart,
 } from "../redux/user/restaurantSlice";
+import { toast } from "react-toastify";
 
-const backendurl = import.meta.env.VITE_BACKEND_URL
+const backendurl = import.meta.env.VITE_BACKEND_URL;
 
 const RestaurantDashboard = () => {
   const navigate = useNavigate();
@@ -56,20 +58,18 @@ const RestaurantDashboard = () => {
   const hasHalfStar = currentRestaurant.averageRating % 1 >= 0.5;
   const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
   const formattedRating = currentRestaurant.averageRating.toFixed(1);
-
-  
-
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedOffer, setSelectedOffer] = useState(null);
   // Example profile photo URL
   const profilePhotoUrl = currentRestaurant.profilePicture;
   // Example cover photo URL
   const coverPhotoUrl = currentRestaurant.coverPhoto;
 
-  const handleSignout = async() => {
+  const handleSignout = async () => {
     try {
       await fetch(`${backendurl}/restaurant/signout`);
       dispatch(signOut());
       navigate("/restaurant/sign-in");
-      
     } catch (error) {
       console.log(error);
     }
@@ -92,6 +92,7 @@ const RestaurantDashboard = () => {
       if (!response.ok) {
         // If the response is not ok, throw an error
         const errorData = await response.json();
+        toast.error(errorData.message || "Failed to delete menu item");
         throw new Error(errorData.message || "Failed to delete menu item");
       }
 
@@ -100,13 +101,14 @@ const RestaurantDashboard = () => {
 
       dispatch(updateSuccess(data));
 
-      console.log("Menu item deleted successfully:", data);
+      toast.success("Menu item deleted successfully");
 
       // Update UI state to reflect the deletion (instead of reloading the page)
       // For example, you might want to call a function to refresh the menu list or remove the item from state
       // refreshMenuList(); // Example function, implement as needed
     } catch (error) {
       console.error("Error deleting menu item:", error.message);
+      toast.error("Failed to delete menu item");
       dispatch(updateFailure());
     }
   };
@@ -128,6 +130,7 @@ const RestaurantDashboard = () => {
       if (!response.ok) {
         // If the response is not ok, throw an error
         const errorData = await response.json();
+        toast.error(errorData.message || "Failed to delete offer");
         throw new Error(errorData.message || "Failed to delete offer");
       }
 
@@ -137,8 +140,10 @@ const RestaurantDashboard = () => {
       dispatch(updateSuccess(data));
 
       console.log("Offer deleted successfully:", data);
+      toast.success("Offer deleted successfully");
     } catch (error) {
       console.error("Error deleting offer:", error.message);
+      toast.error("Failed to delete offer");
       dispatch(updateFailure());
     }
   };
@@ -160,8 +165,10 @@ const RestaurantDashboard = () => {
       }
 
       dispatch(deleteRestaurantSuccess(data));
+      navigate("/restaurant/sign-in");
     } catch (error) {
       console.error("Error deleting restaurant:", error);
+      toast.error("Failed to delete restaurant");
       dispatch(deleteRestaurantFailure());
     }
   };
@@ -186,6 +193,7 @@ const RestaurantDashboard = () => {
         setProfileData(data);
       } catch (error) {
         console.error("Error fetching profile data:", error);
+        toast.error("Failed to fetch profile data");
       }
     };
 
@@ -201,68 +209,65 @@ const RestaurantDashboard = () => {
   }
 
   return (
-    <div className="p-4">
-      {/* Cover Photo Section */}
-      <div
-        className="bg-gray-300 h-60 mb-4"
-        style={{
-          backgroundImage: `url(${currentRestaurant.coverPhoto})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      ></div>
-
-      {/* Profile Section */}
-      <div className="flex items-center space-x-4  pl-16">
-        <img
-          src={profilePhotoUrl}
-          alt="Profile Photo"
-          className="h-20 w-20 rounded-full border-4 border-white shadow-lg object-cover"
-        />
-        <div>
-          <h1 className="text-3xl font-bold">{currentRestaurant.title}</h1>
-          <p className="text-sm text-gray-700">{currentRestaurant.about}</p>
-          <div className="flex items-center mb-2">
-            {[...Array(fullStars)].map((_, index) => (
-              <FaStar key={index} className="h-5 w-5 text-yellow-400" />
-            ))}
-            {hasHalfStar && (
-              <FaStarHalfAlt className="h-5 w-5 text-yellow-400" />
-            )}
-            {[...Array(emptyStars)].map((_, index) => (
-              <FaRegStar key={index} className="h-5 w-5 text-gray-300" />
-            ))}
-            <span className="ml-2 text-gray-700">{formattedRating}</span>
-          </div>
-        </div>
-      </div>
-      {/* <hr className="my-4 border-t-2 border-gray-300 mt-12" /> */}
-
+    <div>
       {/* Sidebar */}
-      <div className="drawer">
-        <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-        <div className="drawer-content">
+      <div className="drawer lg:drawer-open">
+        <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
+        <div className="drawer-content flex flex-col justify-center w-full pl-8 pr-8">
           <label
-            htmlFor="my-drawer"
-            className="drawer-button p-2 rounded-full shadow-lg bg-yellow-500 text-white hover:bg-yellow-600 cursor-pointer"
+            htmlFor="my-drawer-2"
+            className="btn btn-primary drawer-button lg:hidden"
           >
-            <FaArrowRight className="text-3xl font-extrabold" />
+            <FaBars />
           </label>
-          <div className=" pl-32">
-            <dt className="text-3xl font-extrabold text-neutral-700 leading-tight items-center flex gap-4">
-              <FaListAlt className="ml-2" />
-              Restaurant Details
+          <div w-full>
+            <div className="relative w-full">
+              {/* Cover Photo */}
+              <div
+                className="bg-gray-300 h-40 w-100"
+                style={{
+                  backgroundImage: `url(${currentRestaurant.coverPhoto})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "fixed",
+                }}
+              ></div>
+
+              {/* Profile Photo - Overlapping Bottom-Left */}
+              <img
+                src={profilePhotoUrl}
+                className="h-48 w-48 rounded-full bg-white border-4 border-white shadow-lg object-cover absolute bottom-0 right-16 transform translate-y-1/2"
+              />
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <div>
+                <h1 className="text-5xl font-extrabold text-gray-900 mt-4">
+                  {currentRestaurant.title}
+                </h1>
+
+                <p className="text-lg text-gray-700 mt-2">
+                  {currentRestaurant.about}
+                </p>
+                <div className="flex items-center mb-2">
+                  {[...Array(fullStars)].map((_, index) => (
+                    <FaStar key={index} className="h-6 w-6 text-yellow-400" />
+                  ))}
+                  {hasHalfStar && (
+                    <FaStarHalfAlt className="h-6 w-6 text-yellow-400" />
+                  )}
+                  {[...Array(emptyStars)].map((_, index) => (
+                    <FaRegStar key={index} className="h-6 w-6 text-gray-300" />
+                  ))}
+                  <span className="ml-2 text-gray-700">{formattedRating}</span>
+                </div>
+              </div>
+            </div>
+            <dt className="text-3xl font-bold text-neutral-700 leading-tight items-center flex gap-4 mt-16">
+              <FaInfoCircle className="ml-2" />
+              About {currentRestaurant.title}
             </dt>
             <div className="mt-6 border-t border-gray-100">
               <dl className="divide-y divide-gray-100">
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                  <dt className="text-md font-medium leading-6 text-gray-900">
-                    Restaurant Name
-                  </dt>
-                  <dd className="mt-1 text-md leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                    {currentRestaurant.title}
-                  </dd>
-                </div>
                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                   <dt className="text-md font-medium leading-6 text-gray-900">
                     Address
@@ -288,105 +293,82 @@ const RestaurantDashboard = () => {
                   </dd>
                 </div>
 
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 " >
-                  <dt className="text-3xl font-extrabold text-neutral-700 leading-tight items-center flex gap-4 mt-8 mb-4">
+                <div className="mt-8 bg-yellow-50  p-8 border-2 border-black rounded   mb-8">
+                  <dt className="text-3xl font-bold text-neutral-700 leading-tight items-center flex gap-4   mb-4 ">
                     <FaTags className="ml-2" />
-                    Special Offers
+                    Manage Offers
                   </dt>
-                  <dd className="mt-2 text-sm text-gray-900 sm:col-span-2 sm:mt-0"></dd>
-
-                  {currentRestaurant.specialDeals.map((deal, index) => (
-                    <div
-                      key={index}
-                      className="card card-compact bg-base-100 w-96 shadow-xl"
-                      style={{ width: "20rem", height: "24rem" }}
-                    >
-                      <figure>
-                        <img
-                          src={
-                            deal.photo ||
-                            "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-                          }
-                          className="w-full"
-                          //alt="Special Offers"
-                        />
-                      </figure>
-                      <div className="card-body">
-                        <h2 className="card-title">{deal.name}</h2>
-                        <p>{deal.dealDescription}</p>
-                        <div className="card-actions justify-end">
-                          <div className="text-red-500 text-lg">
-                            <button
-                              className="btn"
-                              onClick={() => handleDeleteOffer(currentRestaurant._id, deal._id)}
-                            >
-                              <div className=" text-lg">
-                                <FaTrash className="text-red-500" />
-                              </div>
-                            </button>
-                            {/* <dialog id="my_modal_2" className="modal">
-                              <div className="modal-box">
-                                <h3 className="font-bold text-lg text-black">
-                                  Are You sure you want to delete this Offer?
-                                </h3>
-                                <div className="modal-action">
-                                  <form method="dialog">
-                                    
-                                    <button
-                                      className="btn btn-error"
-                                      onClick={() =>
-                                        handleDeleteOffer(
-                                          currentRestaurant._id,
-                                          deal._id
-                                        )
-                                      }
-                                      aria-label="Close modal"
-                                    >
-                                      Delete
-                                    </button>
-                                    <span> </span>
-                                    <span></span>
-                                    <button className="btn">Close</button>
-                                  </form>
-                                </div>
-                              </div>
-                            </dialog> */}
-                          </div>
-                          <button className="btn btn-neutral">
+                  <div className="flex flex-row  justify-center  gap-8">
+                    <dd className="mt-2 text-sm text-gray-900 sm:col-span-2 sm:mt-0"></dd>
+                    {currentRestaurant.specialDeals.map((deal, index) => (
+                      <div
+                        key={index}
+                        className="relative bg-white rounded-2xl shadow-lg overflow-hidden w-80 transform transition-all hover:scale-105"
+                      >
+                        {/* Deal Image */}
+                        <div className="relative">
+                          <img
+                            src={
+                              deal.photo ||
+                              "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
+                            }
+                            alt={deal.name}
+                            className="w-full h-48 object-cover"
+                          />
+                          {/* Discount Badge */}
+                          <span className="absolute top-0 right-0 bg-red-500 text-white text-s font-semibold px-3 py-1 shadow-md">
                             {deal.price_discount}
+                          </span>
+                        </div>
+
+                        {/* Deal Info */}
+                        <div className="p-4">
+                          <h2 className="text-lg font-bold text-gray-900">
+                            {deal.name}
+                          </h2>
+                          <p className="text-gray-600 text-sm mt-2">
+                            {deal.dealDescription}
+                          </p>
+                        </div>
+                        <div className="flex items-center justify-between px-5 py-4 border-t">
+                          <button
+                            className="flex items-center gap-2 text-red-500 hover:text-red-700 transition"
+                            onClick={() => setSelectedOffer(deal)}
+                          >
+                            <FaTrash />
+                            <span className="text-sm font-medium">Remove</span>
                           </button>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
 
-                <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 mx-auto">
-                  <dt className="text-3xl font-extrabold text-neutral-700 leading-tight items-center flex gap-4 mt-8">
+                <div className="overflow-x-auto mt-6 mx-auto items-center justify-center">
+                  <dt className="text-3xl font-bold text-neutral-700 leading-tight items-center flex gap-4 mt-8">
                     <FaHamburger className="ml-2" />
-                    Your Menu
+                    Manage Menu
                   </dt>
                 </div>
               </dl>
             </div>
 
-            <div className="overflow-x-auto mt-6 w-4/5 ">
-              <table className="table">
-                {/* <thead>
-                  <tr>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                </thead> */}
+            <div className="overflow-x-auto mt-6 w-full">
+              <table className="table mt-6 border-4 border-black rounded-lg mb-8 w-full">
                 <tbody>
+                  {Object.keys(groupedMenuItems).length === 0 && (
+                    <tr>
+                      <td colSpan="3" className="  text-lg text-gray-400 bg-gray-100 rounded-md py-2 px-4 mb-4 w-200 items-center justify-center">
+                        No menu items found. Add some to get started.
+                      </td>
+                    </tr>
+                  )}
                   {Object.keys(groupedMenuItems).map((category, catIndex) => (
                     <React.Fragment key={catIndex}>
                       <tr>
                         <td
                           colSpan="3"
-                          className="font-bold text-md text-gray-800 bg-gray-100 rounded-md py-2 px-4 mb-4"
+                          className="font-bold text-lg text-gray-800 bg-gray-100 rounded-md py-2 px-4 mb-4"
                         >
                           {category}
                         </td>
@@ -414,58 +396,25 @@ const RestaurantDashboard = () => {
                               </div>
                             </div>
                           </td>
-                          <td className="font-bold text-md">{item.price}</td>
+                          <td className="font-bold text-lg text-gray-900">
+                            {item.price}
+                          </td>
                           <td className="font-bold text-md">
                             <div className="flex items-center gap-4">
-                              <div className="text-yellow-500 text-lg">
-                                <button className="btn">
-                                  <Link
-                                    to={`/restaurant/${currentRestaurant._id}/menu/edit/${item._id}`}
-                                  >
-                                    <FaEdit />
-                                  </Link>
-                                </button>
-                              </div>
-                              <div>
-                                <div className="text-red-500 text-lg">
-                                  <button
-                                    className="btn"
-                                    onClick={() => handleDeleteMenuItem(currentRestaurant._id, item._id)
-                                    }
-                                  >
-                                    <div className="text-red-500 text-lg">
-                                      <FaTrash />
-                                    </div>
-                                  </button>
-                                  {/* <dialog id="my_modal_1" className="modal">
-                                    <div className="modal-box">
-                                      <h3 className="font-bold text-lg text-black">
-                                        Are You sure you want to delete this
-                                        item?
-                                      </h3>
-                                      <div className="modal-action">
-                                        <form method="dialog">
-                                          <button
-                                            className="btn btn-error"
-                                            onClick={() =>
-                                              handleDeleteMenuItem(
-                                                currentRestaurant._id,
-                                                item._id
-                                              )
-                                            }
-                                            aria-label="Close modal"
-                                          >
-                                            Delete
-                                          </button>
-                                          <span> </span>
-                                          <span></span>
-                                          <button className="btn">Close</button>
-                                        </form>
-                                      </div>
-                                    </div>
-                                  </dialog> */}
-                                </div>
-                              </div>
+                              <button className="btn btn-outline">
+                                <Link
+                                  to={`/restaurant/${currentRestaurant._id}/menu/edit/${item._id}`}
+                                >
+                                  <FaEdit />
+                                </Link>
+                              </button>
+
+                              <button
+                                className="btn btn-outline btn-error"
+                                onClick={() => setSelectedItem(item)}
+                              >
+                                <FaTrash />
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -474,27 +423,85 @@ const RestaurantDashboard = () => {
                   ))}
                 </tbody>
               </table>
+              {selectedItem && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                  <div className="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 className="text-lg font-semibold">Confirm Delete</h3>
+                    <p>
+                      Are you sure you want to delete{" "}
+                      <strong>{selectedItem.itemName}</strong>?
+                    </p>
+                    <div className="flex justify-end mt-4">
+                      <button
+                        className="btn btn-outline mr-2"
+                        onClick={() => setSelectedItem(null)}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="btn btn-error"
+                        onClick={() => {
+                          handleDeleteMenuItem(
+                            currentRestaurant._id,
+                            selectedItem._id
+                          );
+                          setSelectedItem(null);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {selectedOffer && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                  <div className="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 className="text-lg font-semibold">Confirm Delete</h3>
+                    <p>
+                      Are you sure you want to delete this offer{" "}?
+                       
+                    </p>
+                    <div className="flex justify-end mt-4">
+                      <button
+                        className="btn btn-outline mr-2"
+                        onClick={() => setSelectedOffer(null)}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="btn btn-error"
+                        onClick={() => {
+                          handleDeleteOffer(
+                            currentRestaurant._id,
+                            selectedOffer._id
+                          );
+                          setSelectedOffer(null);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         <div className="drawer-side">
           <label
-            htmlFor="my-drawer"
+            htmlFor="my-drawer-2"
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
-          <ul className="menu bg-white text-gray-900 min-h-full w-80 p-4 space-y-2">
+          <ul className="menu bg-gray-300 text-gray-900 min-h-full w-80 p-4 justify-center flex flex-col">
             {/* Sidebar content here */}
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <div className=" items-center ">
+
+            <div className=" items-center justify-center flex flex-col mb-8 ">
               <img
                 src={profilePhotoUrl}
-                alt="Profile Photo"
-                className="h-20 w-20 rounded-full border-4 border-white shadow-lg object-cover"
+                className="h-32 w-32 bg-gray-300 rounded-full border-4 border-white shadow-lg object-cover"
               />{" "}
               {/* Profile Photo */}
               <div>
@@ -508,32 +515,44 @@ const RestaurantDashboard = () => {
                 {/* Additional Info */}
               </div>
             </div>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
+
             <li className="mb-2">
-              <a className="flex items-center p-2 rounded-lg hover:bg-gray-200" href="/restaurant/dashboard">
+              <a
+                className="flex items-center p-2  hover:bg-gray-200"
+                href="/restaurant/dashboard"
+              >
                 <FaHome className="mr-2" /> Home
               </a>
             </li>
             <li className="mb-2">
-              <a className="flex items-center p-2 rounded-lg hover:bg-gray-200" href="/restaurant/home">
+              <a
+                className="flex items-center p-2  hover:bg-gray-200"
+                href="/restaurant/home"
+              >
                 <FaUserEdit className="mr-2" /> Update Profile
               </a>
             </li>
             <li className="mb-2">
-              <a className="flex items-center p-2 rounded-lg hover:bg-gray-200" href="/restaurant/menu">
+              <a
+                className="flex items-center p-2 rounded-lg hover:bg-gray-200"
+                href="/restaurant/menu"
+              >
                 <FaUtensils className="mr-2" /> Add Menu Items
               </a>
             </li>
             <li className="mb-2">
-              <a className="flex items-center p-2 rounded-lg hover:bg-gray-200" href="/restaurant/add-offers">
+              <a
+                className="flex items-center p-2 rounded-lg hover:bg-gray-200"
+                href="/restaurant/add-offers"
+              >
                 <FaTag className="mr-2" /> Add Offers
               </a>
             </li>
             <li className="mb-2">
-              <a className="flex items-center p-2 rounded-lg hover:bg-gray-200" href="/restaurant/set-location">
+              <a
+                className="flex items-center p-2 rounded-lg hover:bg-gray-200"
+                href="/restaurant/set-location"
+              >
                 <FaMapMarkerAlt className="mr-2" /> Location
               </a>
             </li>
@@ -546,8 +565,11 @@ const RestaurantDashboard = () => {
               >
                 <FaTrash className="mr-2" /> Delete Account
               </a>
-              <dialog id="my_modal_3" className="modal">
-                <div className="modal-box">
+              <dialog
+                id="my_modal_3"
+                className="modal items-center justify-center flex flex-col"
+              >
+                <div className="modal-box bg-white p-4 rounded items-center justify-center flex flex-col">
                   <h3 className="font-bold text-lg">
                     Are You sure you want to delete your restaurant?
                   </h3>
@@ -555,16 +577,15 @@ const RestaurantDashboard = () => {
                     <form method="dialog">
                       {/* if there is a button in form, it will close the modal */}
                       <button
-                        className="btn btn-error"
+                        className="btn btn-error mr-2"
                         onClick={() =>
                           handleDeleteRestaurant(currentRestaurant._id)
                         }
                         aria-label="Close modal"
                       >
-                        Yes,Delete <FaSadTear />
+                        Yes,Delete
                       </button>
-                      <span> </span>
-                      <span></span>
+
                       <button className="btn">Close</button>
                     </form>
                   </div>
@@ -575,7 +596,6 @@ const RestaurantDashboard = () => {
               <a
                 className="flex items-center p-2 rounded-lg hover:bg-gray-200"
                 onClick={() => handleSignout()}
-                
               >
                 <FaSignOutAlt className="mr-2" /> Sign out
               </a>

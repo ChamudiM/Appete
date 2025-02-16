@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useJsApiLoader, GoogleMap, Marker, Autocomplete } from '@react-google-maps/api';
 import { updateStart, updateSuccess, updateFailure } from '../redux/user/restaurantSlice';
+import {toast} from 'react-toastify';
 const backendurl = import.meta.env.VITE_BACKEND_URL
 const SetRestaurantLocation = () => {
   const { currentRestaurant } = useSelector((state) => state.restaurant);
@@ -42,8 +43,11 @@ const SetRestaurantLocation = () => {
         const lng = location.lng();
         setMarkerPosition({ lat, lng });
         setCenter({ lat, lng });
+
       } else {
         console.error(`Geocode was not successful for the following reason: ${status}`);
+        toast.error('Location not found!');
+
       }
     });
   };
@@ -64,6 +68,7 @@ const SetRestaurantLocation = () => {
 
       if (!res.ok) {
         const errorData = await res.json();
+        toast.error(errorData.message || 'An error occurred while updating location');
         throw new Error(errorData.message || 'An error occurred while updating location');
       }
 
@@ -71,9 +76,11 @@ const SetRestaurantLocation = () => {
       if (data.success === false) {
         setMessage({ type: 'error', text: data.message });
         dispatch(updateFailure({ message: data.message }));
+        toast.error(data.message);
       } else {
         setMessage({ type: 'success', text: 'Location updated successfully!' });
         dispatch(updateSuccess(data));
+        toast.success('Location updated successfully!');
       }
     } catch (error) {
       setMessage({ type: 'error', text: error.message || 'An unexpected error occurred' });
@@ -87,7 +94,7 @@ const SetRestaurantLocation = () => {
 
   return (
     <div style={{ height: '100vh', width: '100%' }}>
-      {message.text && (
+      {/* {message.text && (
         <div style={{
           position: 'absolute',
           top: '10px',
@@ -105,7 +112,7 @@ const SetRestaurantLocation = () => {
         }}>
           {message.text}
         </div>
-      )}
+      )} */}
       <div style={{
         position: 'absolute',
         top: '50px',

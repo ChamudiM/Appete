@@ -9,6 +9,7 @@ import {
 } from "firebase/storage";
 import { app } from "../firebase";
 import RestaurantHeader from "../components/RestaurantHeader";
+import { toast } from "react-toastify";
 import { FaUpload } from "react-icons/fa";
 
 const backendurl = import.meta.env.VITE_BACKEND_URL
@@ -48,10 +49,12 @@ const AddOffers = () => {
       (error) => {
         setImageError(true);
         console.log(error);
+        toast.error("Image upload failed");
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           console.log("File available at", downloadURL);
+          toast.success("Image uploaded successfully");
           setFormData({ ...formData, photo: downloadURL });
         });
       }
@@ -81,6 +84,7 @@ const AddOffers = () => {
 
       if (!res.ok) {
         const errorData = await res.json();
+        toast.error(errorData.message);
         throw new Error(
           errorData.message || `HTTP error! status: ${res.status}`
         );
@@ -91,6 +95,7 @@ const AddOffers = () => {
       setSuccess(true);
       setError(null);
       dispatch(updateSuccess(data));
+      toast.success("Special offer added successfully");
       setTimeout(() => {
         setSuccess(false);
         setSubmitDone(true);
@@ -98,6 +103,7 @@ const AddOffers = () => {
       }, 500); // Hide success message after 3 seconds
     } catch (error) {
       console.error("Error adding offers:", error);
+      toast.error(error.message);
       setError(error.message);
       setSubmitError(true);
     }
@@ -127,7 +133,7 @@ const AddOffers = () => {
 
           <form
             onSubmit={handleSubmit}
-            className="mb-0 mt-6 space-y-4 rounded-lg p-4 shadow-lg sm:p-6 lg:p-8"
+            className="mb-0 mt-6 space-y-4 rounded-lg p-4 shadow-lg sm:p-6 lg:p-8 border-2 border-yellow-500"
           >
             <div>
               <p className="text-center text-lg font-medium">
@@ -152,7 +158,7 @@ const AddOffers = () => {
                       alt="Avatar Tailwind CSS Component"
                     />
                   </div>
-                  {imageError ? (
+                  {/* {imageError ? (
                     <progress
                       className="progress progress-error w-56"
                       value="100"
@@ -176,7 +182,7 @@ const AddOffers = () => {
                     </span>
                   ) : (
                     ""
-                  )}
+                  )} */}
                   <input
                     id="photo"
                     type="file"
@@ -258,14 +264,10 @@ const AddOffers = () => {
             </div>
 
             {submitError && (
-              <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-                Cannot Save Offer
-              </div>
+              toast.error(submitError + " Please try again")
             )}
             {submitDone && (
-              <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-                Offer Saved
-              </div>
+              toast.success("Offer added successfully")
             )}
 
             <div>

@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify"; // Import Toastify components
+import "react-toastify/dist/ReactToastify.css";
 import { signInFailure, signInStart, signInSuccess } from "../redux/user/restaurantSlice";
 const backendurl = import.meta.env.VITE_BACKEND_URL
 console.log(backendurl)
@@ -112,15 +114,11 @@ const RestaurantSignIn = () => {
             </div>
           </form>
           {success && (
-            <div className="mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-              Logged in successfully!!
-            </div>
+            toast.success("Sign in successful!", { autoClose: 3000 })
           )}
 
           {showError && (
-            <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-              {error}
-            </div>
+            toast.error(error, { autoClose: 3000 })
           )}
           <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?
